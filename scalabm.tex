@@ -38,7 +38,7 @@ We also want to develop a framework that minimizes developer time when either bu
 \end{itemize}
 
 \subsubsection{Scalable...}
-Aggregate behavior of many (most?) real world social systems fundamentally depends on system size. Therefore in order to accurately model system dynamics we need to be able to run our models as close to observed scale as possible. We need to start thinking about building models ``as if'' we were developing web applications so that we can leverage recent hardware (i.e., massively multi-core servers, cloud computing architectures such as \href{http://aws.amazon.com/}{AWS}, \href{https://www.heroku.com/}{Heroku}, and \href{https://mesosphere.com/}{Mesosphere}, etc) and software advances (specifically \href{http://www.scala-lang.org/}{Scala}, \href{http://akka.io/}{Akka}, etc) that are driving the proliferation of large-scale, distributed web applications in private industry.
+Aggregate behavior of many (most?) real world social systems fundamentally depends on system size. Therefore in order to accurately model system dynamics we need to be able to run our models as close to observed scale as possible. We need to start thinking about building models ``as if'' we were developing web applications so that we can leverage recent hardware (i.e., massively multi-core servers, cloud computing architectures that are driving the proliferation of large-scale, distributed web applications in private industry.
 
 \subsubsection{Data-driven...}
 We want to build models that can be validated against empirical data and therefore we need to design our toolkit to facilitate this.  Again we should think of our models ``as if'' they are web applications. Web applications consume streams of input data and produce streams of output data; some output data streams are processed and then used again as new input data streams. With all of this data flowing around, database integration and data processing are crucial components of web application \textit{design}. We should design our toolkit to integrate cleanly with database architectures, such as \href{http://cassandra.apache.org/}{Apache Cassandra} and \href{http://neo4j.com/}{Neo4j}, and data processing engines, such as \href{http://spark.apache.org/}{Apache Spark}, that are specifically designed to support large-scale web applications.
@@ -56,14 +56,19 @@ In order to address these issues and make models built using our toolkit reprodu
 \section{High-level design}
 
 \subsection{Platform architecture}
-The high-level design of our platform's architecture should mimic the layered architecture of a \href{http://www.reactivemanifesto.org/}{reactive}, ``Big Data'' web application. Figure \ref{img-figure1} summarizes the high-level design of our platform architecture.
+The high-level design of our platform's architecture should mimic the layered architecture of a \href{http://www.reactivemanifesto.org/}{reactive}, ``Fast Data'' web application. Figure \ref{img-figure1} summarizes the high-level design of our platform architecture.\footnote{
+%
+See figure 1 from \href{./fast-data-big-data-evolved.pdf}{Wampler (2015)} for a similar high-level summary of a Reactive, ``Fast Data'' web application architecture.
+%
+}
 \begin{figure}[H]\label{img-figure1}
 \centering
 \includegraphics[width=12cm]{img/coarse-grain-schema.pdf}
 \caption{High-level architecture design for ScalABM.}
 \end{figure}
 
-\subsubsection{Cluster management}
+\subsubsection{Cluster management} 
+Our strategy for building and running models at scale is to leverage massively multi-core cloud computing clusters.  In order to pursue this scaling strategy our platform will need to have a cluster manager. From Wikipedia: A cluster manager usually is a backend graphical user interface (GUI) or command-line software that runs on one or all cluster nodes (in some cases it runs on a different server or cluster of management servers.) The cluster manager works together with a cluster management agent. These agents run on each node of the cluster to manage and configure services, a set of services, or to manage and configure the complete cluster server itself (see super computing.) In some cases the cluster manager is mostly used to dispatch work for the cluster (or cloud) to perform. In this last case a subset of the cluster manager can be a remote desktop application that is used not for configuration but just to send work and get back work results from a cluster. 
 
 \subsubsection{Modeling environment}
 The modeling environment consists of user interfaces and the modeling layer. The ``front end'' of our modeling environment should consist of two, complementary user interfaces.
@@ -73,17 +78,18 @@ The modeling environment consists of user interfaces and the modeling layer. The
 \end{enumerate}
 The ``back end'' of our modeling environment is the modeling layer which consists of the actual source code libraries used to implement our ABMs. The modeling layer should facilitate the construction of new ABMs out of pre-existing, modular components.  Model configuration, including specification of all model parameters as well as the ``wiring'' of model components, should be specified in configuration files that are separate from the actual source code. 
 
-\subsubsection{Platform infrastructure}
-In addition to the core modeling environment there are two additional architecture components necessary for achieving scalability and data-driven objectives: cluster management and data management.
-
-Our scalability strategy is to leverage massively multi-core cluster computing. In orde
-
-We want to build data-driven ABMs of economic systems. In order for our ABMs to be data-driven, we should design our platform to incorporate data management. There are three components (at least!) to data management: buffering, analytics, and storage.
+\subsubsection{Data Management}
+We want to build data-driven ABMs of economic systems. In order for our ABMs to be data-driven, we should design our platform to incorporate data management. There are three components (at least!) to data management: access, analytics, and storage.
 \begin{itemize}
-    \item Buffering:
+    \item Access: A running ABM will generate a large volume of data some of which will need to be routed for storage, some of which will need to be routed to a data analytics engine, and some of which will need to be routed to log files. Additionally, data will likely flow in the reverse direction.  In particular, agents in a running ABM may need to read data from a data store (for example, we might wish to initialize economic agents using real-world data).
     \item Analytics: A running ABM is a continuous source of data whose volume is not predetermined. Put another way: ABMs generate \href{http://www.reactive-streams.org/}{reactive data streams}.  Our data analytics components should therefore include tooling for processing and analyzing streaming data. In addition to processing and analyzing streaming data, we will also need to preform various ``batch'' or ``mini-batch'' computations. Such batch processing jobs would be performed either relatively infrequently on streaming data or upon completion of a model simulation. Our data analytics should include tooling for dealing with batch computations.
-    \item Storage: The way in which we store our data should be heavily influenced by the types of questions we intend to ask of our data.  Broadly speaking, there are two kinds of questions Key-Value databases are designed for storing data in a schema-less way. In a key-value store, each datum consists of an indexed key and a value, hence the name.  Graph databases, meanwhile, are designed for data whose relations are well represented as a graph and has elements which are interconnected, with an undetermined number of relations between them.
+    \item Storage: The way in which we store our data should be heavily influenced by the types of questions we intend to ask of our data. Broadly speaking, we will need to deal with two types of data: real-world data and model generated data.
 
+    There are two kinds of questions that we will want to ask of our model generated data:
+        \begin{enumerate}
+            \item Key-Value databases are designed for storing data in a schema-less way. In a key-value store, each datum consists of an indexed key and a value, hence the name. 
+            \item Relationship questions: What does the network structure of interbank lending look like? What does the input-output (IO) production network look like? Graph databases are designed for data whose relations are well represented as a graph and has elements which are interconnected, with an undetermined number of relations between them.
+        \end{enumerate} 
     The modeling layer should have read/write access to a scalable data store. Additionally, the data analytics components will need a source of input data. In order to avoid simulations being I/O bound, our data store should have extremely fast write access.
 \end{itemize}
 
@@ -115,12 +121,62 @@ Several key features distinguish \textit{economic} agents from more generic type
     \item Expectations formation rules: A large number of various expectation formation rules have been proposed in the literature. Useful references for expectation formation rules are \href{http://feb.kuleuven.be/fac/Slides_Degrauwe/HomHBchapter23.pdf}{Hommes (2006)}, \href{http://econ.columbia.edu/files/econ/content/hommes_background_material_2.pdf}{Anufriev and Hommes (2012)}, \href{http://www.columbia.edu/~mw2230/AREcon.pdf}{Woodford (2013)}, \href{http://www.emeraldinsight.com/doi/pdfplus/10.1108/S0193-230620140000017002}{Assenza et al (2014)}.
 \end{itemize}
 
-Additional key abstractions: Counter party behavior, contracts, balance sheets.
+% \subsection{\texttt{CounterpartyActor} API}
+% Perhaps surprisingly, some economists have already been thinking along these lines:
 
-Balance sheets are collections of contracts. Counter party behavioral trait should encapsulate behavior for dealing with contracts.
+% \begin{quote}
+% ``To analyze how financial commitments affect the economy it is necessary to look at economic units in terms of their cash flows. The cash-flow approach looks at all units -- be they households, corporations, state and municipal governments, or even national governments -- as if they were banks.''
+% \end{quote}
+
+% The above quotation is taken from Hyman Minsky's magnum opus ``Stabilizing an Unstable Economy.''  Following Minsky,
+% and more recently Perry Mehrling, we view every \texttt{EconomicActor} as an entity that is both receiving certain cash flow events (i.e., receipts of various kinds) as well as generating cash flow events (i.e., expenditures of various kinds).\footnote{
+% %
+% Both Minsky and Mehrling subscribe to the ``banking perspective''. Within the banking perspective, the most basic constraint that all economic actors face is the \textit{survival constraint}: the inflow of receipts must be at least as big as the outflow of expenditures events. Put another way, maintaining sufficient liquidity is the primary concern for all economic actors; solvency (i.e., in the positive net worth sense) is a secondary concern.
+% %
+% }
+
+% The time pattern of cash flow events for a particular \texttt{EconomicActor} will be primarily determined by the various contractual arrangements to which it is a \textit{counterparty}.  Thus, in our framework, every \texttt{EconomicActor} is also a \texttt{CounterpartyActor}. The accumulation, across time, of cash flow events for a particular \texttt{CounterpartyActor} is captured by its \textit{balance sheet}.
+
+% \subsubsection{Requirements for a \texttt{CounterpartyActor}}
+% Quick list of current requirements for a \texttt{CounterpartyActor}:
+% \begin{itemize}
+%     \item a \texttt{CounterpartyActor} should have a \texttt{BalanceSheet},
+%     \item a \texttt{CounterpartyActor} should be able to process cash flow events.
+% \end{itemize}
+
+% \subsubsection{Requirements for a \texttt{BalanceSheet}}
+% Quick list of current requirements for a \texttt{BalanceSheet}:
+% \begin{itemize}
+%     \item a \texttt{BalanceSheet} should have a collection of \texttt{ContractActor} objects representing assets, 
+%     \item a \texttt{BalanceSheet} should have a collection of \texttt{ContractActor} objects representing liabilities,
+%     \item a \texttt{BalanceSheet} should be able to compute its equity.
+% \end{itemize}
+
+% \subsubsection{Requirements for a \texttt{ContractActor}}
+% Quick list of current requirements for a \texttt{ContractActor}:
+% \begin{itemize}
+%     \item a \texttt{ContractActor} is a \texttt{CommunicatingActor},
+%     \item a \texttt{ContractActor} should have an issuer for whom the \texttt{ContractActor} is a liability, 
+%     \item a \texttt{ContractActor} should have a counterparty for whom the \texttt{ContractActor} is an asset,
+%     \item a \texttt{ContractActor} should have a \texttt{Commitment} specifying the terms of the agreement between the issuer and the counterparty,
+%     \item a \texttt{ContractActor} should be able to value its \texttt{Commitment}.
+% \end{itemize}
+% Conceptually, a \texttt{ContractActor} represents a channel for communication between the issuer and the counterparty to the underlying \texttt{Commitment}.
+
+
 
 \subsubsection{Information Layer}
-Our economic agents will need access to information in order to make decisions.
+Our economic agents will need to condition their decisions on an information set.  In contrast to (most) DSGE models, information sets in our framework will be highly heterogeneous. The information set for any particular economic agent should consist of three components:
+\begin{itemize}
+    \item Private information: information that is idiosyncratic to a particular agent. 
+    \item Public information: information that a particular agent shares with one or more agents.
+    \item Global information: information that is shared between all agents.
+\end{itemize}
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/information-sets.pdf}
+\caption{Information set for a particular economic agent.}
+\end{figure}
 
 \subsubsection{Data Analytics Layer}
 The data analytics layer encapsulates the functionality for aggregating raw data into additional structured data that agents can use for making decisions.  Specifically, the data analytics layer would contain classes and methods for computing standard macro economic indicators (i.e., real and nominal GDP, stock market index, house price index, consumer price index, unemployment rates, etc). Users should be able to extend the data analytics capabilities as needed for a particular model.
@@ -128,6 +184,10 @@ The data analytics layer encapsulates the functionality for aggregating raw data
 \section{Implementation}
 
 \subsection{Platform architecture}
+
+\subsubsection{Cluster Management}
+We will not need to implement the cluster management layer.  Instead we will simply ``containerize'' an ABM built using our framework and send it off to a third-party cloud computing service provider such as \href{http://aws.amazon.com/}{AWS}, \href{https://www.heroku.com/}{Heroku}, \href{https://mesosphere.com/}{Mesosphere}, etc.  We can then choose the scale at which we wish to run the model. Once the model is running on the cluster we can configure the scale(s) at which we wish to simulate the model and the cloud computing service provider will handle the rest.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=10cm]{img/coarse-grain-schema-2.pdf}
@@ -136,23 +196,28 @@ The data analytics layer encapsulates the functionality for aggregating raw data
 
 
 \subsection{Modeling Layer}
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/hierarchical-actor.pdf}
+\caption{???}
+\end{figure}
 
 \subsubsection{Communication Layer}
-In order to impose structure on inter-agent communications we have developed a scalable agent communication language (ScalACL). Our framework leverages the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency as implemented in the \href{http://akka.io/}{Akka} library to model both direct and indirect communication between economic agents as concurrent, asynchronous message passing.\footnote{
+In order to impose structure on inter-agent communications we have developed an API for a scalable agent communication language for economic agents tentatively called ScalACL. ScalACL leverages the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency as implemented in the \href{http://akka.io/}{Akka} library to model both direct and indirect communication between economic agents using concurrent, asynchronous message passing.\footnote{
 %
 Akka is a toolkit and runtime for building highly concurrent, distributed, and resilient message-driven applications on the JVM.
 %
 }
+The ScalACL API specifies...
+\begin{itemize}
+    \item a set of abstract message types that impose structure on the messages passed between a group of economic agents,
+    \item a set of abstract protocols that impose structure on conversations (i.e., sequences of messages) between a group of economic agents,
+    \item a behavioral trait that allows an agent to communicate using the language.
+\end{itemize}
+Each abstract message type can be thought of as defining an ``envelope'' containing the actual content of the message that is to be exchanged between a group of economic agents. Defining envelopes containing messages is useful because it allows agents to react based on the type message received. Each abstract protocol defines a particular subset of message types that can be sent by an agent in response to a particular type of message that it has received. 
 
+Our agent communication API is influenced by, but not slave to, the \href{http://www.fipa.org/}{Foundation for Intelligent Physical Agents (FIPA)} compliant \href{http://www.fipa.org/specs/fipa00037/SC00037J.pdf}{Agent Communication Language (ACL)}.
 
-
-\subsubsection{Agents}
-An agent in our framework is a collection of Akka Actors.
-\begin{figure}[H]
-\centering
-\includegraphics[width=10cm]{img/hierarchical-actor.pdf}
-\caption{Model layer will be the focal point of project.}
-\end{figure}
 % \section{Economics as distributed computation}
 % Major source of motivation for our approach is Rob Axtell's \href{http://www.researchgate.net/profile/Robert_Axtell2/publication/228586815_Economics_as_distributed_computation/links/0a85e536b81c27f06e000000.pdf}{2002 Brookings working paper}.
 

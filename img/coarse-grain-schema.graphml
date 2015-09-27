@@ -108,7 +108,7 @@
           <y:Geometry height="183.8677308935919" width="200.1781371046443" x="157.25889414535567" y="-290.11034982179604"/>
           <y:Fill color="#FFFFFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="custom" textColor="#000000" visible="true" width="114.7666015625" x="42.705767771072146" y="75.21218575929595">Buffering<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="custom" textColor="#000000" visible="true" width="86.275390625" x="56.951373239822146" y="75.21218575929595">Access<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
