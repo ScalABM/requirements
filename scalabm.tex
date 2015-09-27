@@ -12,37 +12,13 @@
 \begin{document}
 \maketitle
 
-\section{Objective...}
+\section{Objective}
 Our objective is to create a \textit{user-friendly} toolkit for building \textit{scalable}, \textit{data-driven} agent-based models (ABMs) of \textit{economic} systems.
 
-\subsection{Motivation}
-Currently the economic ABM community lacks a coherent set of standard tools for testing, developing, and validating their models. The lack of such a toolkit has significantly hindered the progress of agent-based modeling.\footnote{
-%
-TODO: Compare and contrast our approach with EURACE (and its derivatives), JMAB, Jas-mine, CRISIS, Repast, Swarm, etc.  In particular focus on applications that are economics focused.
-%
-} 
-What we have outlined in the previous section is our vision of what such a ``standard'' should look like. However, in order to avoid...
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=10cm]{standards.png}
-\end{figure}
-
-...we need to maximize the chances that our toolkit gets adopted as a standard. There are a number of facets to our vision that we believe increase the likelihood that our toolkit could be adopted as a standard...
-\begin{itemize}
-    \item Network effects are key to establishing a standard. We are leveraging recent hardware and software advances (i.e., AWS, Heroku, Scala, Akka, Spark, Cassandra, Neo4j, etc) that are all open-source, free even for commercial-use (specifically Apache 2.0), and that have already generated substantial networks effects in private industry. Users (i.e., undergraduate and graduate students, post-docs, etc) who adopt our toolkit will be learning to tools that will substantially increase the probability of finding a high-paying job (if they choose to leave academia).  Not clear that learning FLAME, Repast, Swarm, Netlogo, Mason, etc would be as useful outside academia. 
-    \item Credibility is key to establishing a standard. If you were starting a new scientific ABM project, would you be willing to use software if the source code wasn't available, documentation was sparse, and no unit tests had been written? We are following best practices for software engineering that have been used in previous, successful, open source projects and that have found widespread adoption in private industry. In particular, we will place our source code under version control, develop a rigorous set of unit tests, and strive to maintain a high degree of test and documentation coverage, throughout the lifetime of the project.
-\end{itemize}
-...additionally...
-\begin{itemize}
-    \item We should strive to release (early and often!) models from the existing ABM literature as simple example use-cases.    
-    \item We should actively seek out partners in private industry for software development expertise.  Many (all?) previous efforts to design toolkits for agent-based modeling have failed due to insufficient attention to software engineering issues. We have been developing networks and contacts in private industry (i.e., Typesafe, Datastax, etc.) that can help us with some of the software engineering challenges. 
-    \item We should actively seek out partners in private industry for funding of specific projects that would represent use-cases for our toolkit. The likelihood of finding partners in private industry should be increased by our use of a permissive, open-source license.
-\end{itemize}    
 \subsection{Requirements}
 
-\subsubsection{User-friendly...}
-We expect that users of our ABM toolkit can be classified as either consumers or producers. Consumers are users whose primary objective is to learn about the mechanisms driving a model's key results by playing with model parameters and components. Producers are users whose primary objective is to develop new models using some combination of existing and novel model components.
+\subsubsection{...user-friendly...}
+We expect that users of our ABM toolkit can be classified as either consumers or producers. Consumers are users whose primary objective is to learn about the mechanisms driving an existing model's key results by playing with model parameters and components. Producers are users whose primary objective is to develop new models using some combination of existing and novel model components.
 
 We want consumers of models built using our framework, particularly those not directly involved with development of any particular model, to be able to easily interact with a model in order to develop intuition and understanding about the mechanisms driving that model's key results.
 \begin{itemize}
@@ -76,25 +52,113 @@ An economy is populated with many seemingly disparate types of agents (i.e., con
 Results of many (most?) ABMs are not easily reproducible. More often then not, source code for models used in published articles is not publicly available. Reproducibility is further hindered by the lack of use of ``best practices'' for software development (in particular unit testing). Documentation is typically lacking. 
 
 In order to address these issues and make models built using our toolkit reproducible we should develop the toolkit \textit{from the beginning} as an open-source project and should exemplify ``best practices'' in software engineering: version control using \href{https://git-scm.com/}{Git} and \href{https://github.com/}{GitHub}; continuous integration of unit tests using \href{https://travis-ci.org/}{Travis CI} or \href{https://jenkins-ci.org/}{Jenkins}; static analysis of source code using \href{https://www.codacy.com/login}{Codacy}, \href{https://codeclimate.com/}{Code Climate}, etc; documentation should be extensive, written along with the code, and publicly hosted on GitHub.   
+    
+\section{High-level design}
 
-\subsection{Coarse-grain architecture}
-We want to mimic the layered architecture of a modern distributed web application.  The coarse-grained archictecure of ScalABM consists of five layers.
+\subsection{Platform architecture}
+The high-level design of our platform's architecture should mimic the layered architecture of a \href{http://www.reactivemanifesto.org/}{reactive}, ``Big Data'' web application. Figure \ref{img-figure1} summarizes the high-level design of our platform architecture.
+\begin{figure}[H]\label{img-figure1}
+\centering
+\includegraphics[width=12cm]{img/coarse-grain-schema.pdf}
+\caption{High-level architecture design for ScalABM.}
+\end{figure}
+
+\subsubsection{Cluster management}
+
+\subsubsection{Modeling environment}
+The modeling environment consists of user interfaces and the modeling layer. The ``front end'' of our modeling environment should consist of two, complementary user interfaces.
+\begin{enumerate}
+    \item A user-friendly, web-browser based graphical user interface (GUI). The GUI should facilitate interactive exploration of an existing model in near real-time.  The GUI should support real-time data streaming, analysis, and visualization.
+    \item An intuitive and consistent command line interface (CLI). In addition to facilitating efficient batch processing of model simulations (i.e., parameter sweeps), the CLI should allow for easy replication of any particular model simulation.
+\end{enumerate}
+The ``back end'' of our modeling environment is the modeling layer which consists of the actual source code libraries used to implement our ABMs. The modeling layer should facilitate the construction of new ABMs out of pre-existing, modular components.  Model configuration, including specification of all model parameters as well as the ``wiring'' of model components, should be specified in configuration files that are separate from the actual source code. 
+
+\subsubsection{Platform infrastructure}
+In addition to the core modeling environment there are two additional architecture components necessary for achieving scalability and data-driven objectives: cluster management and data management.
+
+Our scalability strategy is to leverage massively multi-core cluster computing. In orde
+
+We want to build data-driven ABMs of economic systems. In order for our ABMs to be data-driven, we should design our platform to incorporate data management. There are three components (at least!) to data management: buffering, analytics, and storage.
 \begin{itemize}
-    \item Cluster Management Layer: Base layer for the entire framework. We will not need to build this layer. We can simply use third-party cluster management tools. Mesos, Amazon EC2, Hadoop/Yarn.  Probably best to package our application up in a ``container'' of some kind (i.e., Docker, etc) and then ship it to a third party cloud computing service that manages a cluster and who can then scale up our application.  Note that, unlike EURACE, we will NOT need to have access to a university or governmental super computer to scale up our application.
-    \item User Interface Layer:
-    \item Data Analytics Layer:
-    \item Model Layer:
-    \item Database Layer:
+    \item Buffering:
+    \item Analytics: A running ABM is a continuous source of data whose volume is not predetermined. Put another way: ABMs generate \href{http://www.reactive-streams.org/}{reactive data streams}.  Our data analytics components should therefore include tooling for processing and analyzing streaming data. In addition to processing and analyzing streaming data, we will also need to preform various ``batch'' or ``mini-batch'' computations. Such batch processing jobs would be performed either relatively infrequently on streaming data or upon completion of a model simulation. Our data analytics should include tooling for dealing with batch computations.
+    \item Storage: The way in which we store our data should be heavily influenced by the types of questions we intend to ask of our data.  Broadly speaking, there are two kinds of questions Key-Value databases are designed for storing data in a schema-less way. In a key-value store, each datum consists of an indexed key and a value, hence the name.  Graph databases, meanwhile, are designed for data whose relations are well represented as a graph and has elements which are interconnected, with an undetermined number of relations between them.
+
+    The modeling layer should have read/write access to a scalable data store. Additionally, the data analytics components will need a source of input data. In order to avoid simulations being I/O bound, our data store should have extremely fast write access.
 \end{itemize}
+
+\subsection{Modeling Layer}
+Important characteristics of our modeling layer.  Scalability. We want to build models with 
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/coarse-grain-model-layer.pdf}
+\caption{High-level design of the modeling layer.}
+\end{figure}
+
+\subsubsection{Communication Layer}
+Concurrent communication between real-world economic agents is a fundamental fact of economic life. Inter-agent communication can be either direct (i.e., ``peer-to-peer'') or indirect (i.e., via market institutions). In order to model both direct and indirect communication between economic agents, our framework  the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency to model both direct and indirect communication between economic agents as concurrent, asynchronous message passing.
+
+t treats ``actors'' as the universal primitives of concurrent computation: in response to a message that it receives, an actor can make local decisions, create more actors, send more messages, and determine how to respond to the next message received.
+
+In order to make progress we need to impose some structure on the type of messages passed between agents.  This structure will have two forms 
+
+
+Communication protocols: Just as the ACL places structure on the actual messages being passed between agent, the communication protocols impose structure on sequences of messages.
+
+\subsubsection{Behavioral layer}
+An economy is populated with many seemingly disparate types of agents (i.e., consumers, producers, financiers, government, etc).  Our goal with the behavioral layer is to distill the core essence (in terms of data and behaviors) of these different agents into a multi-layered API defining a generic \textit{economic agent} that can then be specialized to the various types of economic agents needed for any particular model. Note that the API for our economic agent will build upon the communicating agent API.
+
+Several key features distinguish \textit{economic} agents from more generic types of agents. At a minimum these features include: purpose driven (or goal oriented) behaviour, an ability to learn, and the ability to anticipate future events. This suggests that our behavioral layer will need APIs for...
+\begin{itemize}
+    \item Goals or objectives (and their associated behavioral rules): Our goals/objectives API needs to be as un-opinionated as possible as prospective users of ScalABM are likely to have strong opinions on how to define appropriate goals and decision rules for their agents. At the same time, we will need to have some type of underlying null model of agent goals/objectives. Utility maximization, Belief-Desire-Intent (BDI), probabilistic discrete choice (AKA, random utility maximization) are possibilities.
+    \item Learning rules: A large number of various learning rules/mechanisms have been proposed in the academic literature. Roughly, learning rules seem to fall into two camps: learning through previous experience (i.e., reinforcement learning) and learning through observation (i.e., belief learning). Useful references for learning rules for ABMs are the two handbook chapters \href{http://web.uvic.ca/~mingkang/econ353/project/Brenner.pdf}{Brenner (2006)} and \href{http://www.socsci.uci.edu/~duffy/papers/duffy2006.pdf}{Duffy (2006)}.
+    \item Expectations formation rules: A large number of various expectation formation rules have been proposed in the literature. Useful references for expectation formation rules are \href{http://feb.kuleuven.be/fac/Slides_Degrauwe/HomHBchapter23.pdf}{Hommes (2006)}, \href{http://econ.columbia.edu/files/econ/content/hommes_background_material_2.pdf}{Anufriev and Hommes (2012)}, \href{http://www.columbia.edu/~mw2230/AREcon.pdf}{Woodford (2013)}, \href{http://www.emeraldinsight.com/doi/pdfplus/10.1108/S0193-230620140000017002}{Assenza et al (2014)}.
+\end{itemize}
+
+Additional key abstractions: Counter party behavior, contracts, balance sheets.
+
+Balance sheets are collections of contracts. Counter party behavioral trait should encapsulate behavior for dealing with contracts.
+
+\subsubsection{Information Layer}
+Our economic agents will need access to information in order to make decisions.
+
+\subsubsection{Data Analytics Layer}
+The data analytics layer encapsulates the functionality for aggregating raw data into new, more structured data that agents can then use for making decisions.  Specifically, the data analytics layer would contain classes and methods for computing standard macro economic indicators (i.e., real and nominal GDP, stock market index, house price index, consumer price index, unemployment rates, etc). Users should be able to extend the data analytics capabilities as needed for a particular model.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=10cm]{coarse-grain-schema.pdf}
-\caption{Coarse-grain architecture for ScalABM. }
+\includegraphics[width=10cm]{img/model-layer-interactions.pdf}
+\caption{ Interactions between the various components of the model layer. }
+\end{figure}
+
+\section{Implementation}
+
+\subsection{Platform architecture}
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/coarse-grain-schema-2.pdf}
+\caption{Macro-grain architecture for ScalABM. }
 \end{figure}
 
 
+\subsection{Modeling Layer}
 
+\subsubsection{Communication Layer}
+In order to impose structure on inter-agent communications we have developed a scalable agent communication language (ScalACL). Our framework leverages the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency as implemented in the \href{http://akka.io/}{Akka} library to model both direct and indirect communication between economic agents as concurrent, asynchronous message passing.\footnote{
+%
+Akka is a toolkit and runtime for building highly concurrent, distributed, and resilient message-driven applications on the JVM.
+%
+}
+
+
+
+\subsubsection{Agents}
+An agent in our framework is a collection of Akka Actors.
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/hierarchical-actor.pdf}
+\caption{Model layer will be the focal point of project.}
+\end{figure}
 % \section{Economics as distributed computation}
 % Major source of motivation for our approach is Rob Axtell's \href{http://www.researchgate.net/profile/Robert_Axtell2/publication/228586815_Economics_as_distributed_computation/links/0a85e536b81c27f06e000000.pdf}{2002 Brookings working paper}.
 
