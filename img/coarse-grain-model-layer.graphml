@@ -18,10 +18,10 @@
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="298.84000000000003" width="324.87999999999994" x="303.96000000000004" y="145.15999999999997"/>
+          <y:Geometry height="329.84000000000003" width="324.87999999999994" x="303.96000000000004" y="123.07999999999998"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="150.044921875" x="87.4175390625" y="4.0">Model Layer</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="150.044921875" x="87.41753906249994" y="4.0">Model Layer</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -30,10 +30,10 @@
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="251.07999999999998" width="68.88000000000005" x="550.6800000000001" y="185.38000000000008"/>
+          <y:Geometry height="55.03999999999999" width="305.96000000000015" x="312.91999999999996" y="313.98"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" rotationAngle="90.0" textColor="#000000" visible="true" width="248.8486328125" x="17.718320312500055" y="1.1156835937500205">Data Analytics Layer</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="216.19482421875" x="44.882587890625075" y="10.798320312499982">Behavioural Layer</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -42,10 +42,10 @@
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="78.03999999999999" width="226.96000000000015" x="312.91999999999996" y="185.38000000000005"/>
+          <y:Geometry height="55.039999999999964" width="305.96000000000015" x="312.91999999999996" y="383.98"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="216.19482421875" x="5.382587890625075" y="22.29832031250001">Behavioural Layer</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="210.43310546875" x="47.763447265625075" y="10.798320312499982">Mechanical Layer</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -54,10 +54,10 @@
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="78.03999999999996" width="226.96000000000015" x="312.91999999999996" y="358.4200000000001"/>
+          <y:Geometry height="55.039999999999964" width="305.96000000000015" x="312.91999999999996" y="243.98000000000002"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="210.43310546875" x="8.263447265625075" y="22.298320312499982">Mechanical Layer</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="218.35546875" x="43.802265625000075" y="10.798320312499982">Information Layer</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -66,10 +66,10 @@
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="78.03999999999996" width="226.96000000000015" x="312.91999999999996" y="271.9000000000001"/>
+          <y:Geometry height="55.039999999999964" width="305.96000000000015" x="313.4199999999999" y="173.98000000000002"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="218.35546875" x="4.302265625000075" y="22.298320312499982">Information Layer</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="248.8486328125" x="28.555683593750075" y="10.798320312499982">Data Analytics Layer</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
