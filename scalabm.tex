@@ -37,18 +37,18 @@ We also want to develop a framework that minimizes developer time when either bu
     \item All model configuration should be done in a \textit{single} file (i.e., some type of application configuration file).  Using this application configuration file it should be possible to reproduce a run of a particular model.
 \end{itemize}
 
-\subsubsection{Scalable...}
+\subsubsection{...scalable...}
 Aggregate behavior of many (most?) real world social systems fundamentally depends on system size. Therefore in order to accurately model system dynamics we need to be able to run our models as close to observed scale as possible. We need to start thinking about building models ``as if'' we were developing web applications so that we can leverage recent hardware (i.e., massively multi-core servers, cloud computing architectures that are driving the proliferation of large-scale, distributed web applications in private industry.
 
-\subsubsection{Data-driven...}
+\subsubsection{...data-driven...}
 We want to build models that can be validated against empirical data and therefore we need to design our toolkit to facilitate this.  Again we should think of our models ``as if'' they are web applications. Web applications consume streams of input data and produce streams of output data; some output data streams are processed and then used again as new input data streams. With all of this data flowing around, database integration and data processing are crucial components of web application \textit{design}. We should design our toolkit to integrate cleanly with database architectures, such as \href{http://cassandra.apache.org/}{Apache Cassandra} and \href{http://neo4j.com/}{Neo4j}, and data processing engines, such as \href{http://spark.apache.org/}{Apache Spark}, that are specifically designed to support large-scale web applications.
 
-\subsubsection{Economic...}
+\subsubsection{...economic...}
 Finally, we are not seeking to build a general purpose toolkit for agent-based modeling. Rather we want to build a toolkit that is designed to facilitate the construction of agent-based models of economic systems.
 
 An economy is populated with many seemingly disparate types of agents (i.e., consumers, producers, financiers, government, some markets, etc). We need to distill the core essence (in terms of data and behaviors) of these different agents into a multi-layered Application Programming Interface (API) defining a generic \textit{economic agent} that can then be specialized to the various types of economic agents needed for any particular model. Our hope is that by doing this we can reduce the effort needed for the parts of agent-based modeling that consume a great deal of software development time, such as accounting or contract enforcement.  We also hope that by identifying the key components we can build standard, highly modular interfaces that make it easy to interchange components of models.
 
-\subsubsection{Reproducible...}
+\subsubsection{...reproducible...}
 Results of many (most?) ABMs are not easily reproducible. More often then not, source code for models used in published articles is not publicly available. Reproducibility is further hindered by the lack of use of ``best practices'' for software development (in particular unit testing). Documentation is typically lacking. 
 
 In order to address these issues and make models built using our toolkit reproducible we should develop the toolkit \textit{from the beginning} as an open-source project and should exemplify ``best practices'' in software engineering: version control using \href{https://git-scm.com/}{Git} and \href{https://github.com/}{GitHub}; continuous integration of unit tests using \href{https://travis-ci.org/}{Travis CI} or \href{https://jenkins-ci.org/}{Jenkins}; static analysis of source code using \href{https://www.codacy.com/login}{Codacy}, \href{https://codeclimate.com/}{Code Climate}, etc; documentation should be extensive, written along with the code, and publicly hosted on GitHub.   
@@ -76,21 +76,14 @@ The modeling environment consists of user interfaces and the modeling layer. The
     \item A user-friendly, web-browser based graphical user interface (GUI). The GUI should facilitate interactive exploration of an existing model in near real-time.  The GUI should support real-time data streaming, analysis, and visualization.
     \item An intuitive and consistent command line interface (CLI). In addition to facilitating efficient batch processing of model simulations (i.e., parameter sweeps), the CLI should allow for easy replication of any particular model simulation.
 \end{enumerate}
-The ``back end'' of our modeling environment is the modeling layer which consists of the actual source code libraries used to implement our ABMs. The modeling layer should facilitate the construction of new ABMs out of pre-existing, modular components.  Model configuration, including specification of all model parameters as well as the ``wiring'' of model components, should be specified in configuration files that are separate from the actual source code. 
+The ``back end'' of our modeling environment is the modeling layer which consists of the actual source code libraries used to implement our ABMs. The modeling layer should facilitate the construction of new ABMs out of pre-existing, modular components.  Model configuration, including specification of all model parameters as well as the ``wiring'' of model components, should be specified in configuration files that are separate from the actual source code.
 
 \subsubsection{Data Management}
-We want to build data-driven ABMs of economic systems. In order for our ABMs to be data-driven, we should design our platform to incorporate data management. There are three components (at least!) to data management: access, analytics, and storage.
+In order for our ABMs to be data-driven, we need to think carefully about how our framework we will manage the flow and storage of data (both model generated data as well as real-world data). There are (at least!) three components to data management: access, analytics, and storage.
 \begin{itemize}
-    \item Access: A running ABM will generate a large volume of data some of which will need to be routed for storage, some of which will need to be routed to a data analytics engine, and some of which will need to be routed to log files. Additionally, data will likely flow in the reverse direction.  In particular, agents in a running ABM may need to read data from a data store (for example, we might wish to initialize economic agents using real-world data).
+    \item Access: A running ABM will generate a large volume of data. Model generated data might be stored, sent to a data analytics engine, or logged out to a file(s). Additionally, data will likely flow in the reverse direction.  In particular, agents in a running ABM may need to read data from a data store (for example, we might wish to initialize economic agents using real-world data).
     \item Analytics: A running ABM is a continuous source of data whose volume is not predetermined. Put another way: ABMs generate \href{http://www.reactive-streams.org/}{reactive data streams}.  Our data analytics components should therefore include tooling for processing and analyzing streaming data. In addition to processing and analyzing streaming data, we will also need to preform various ``batch'' or ``mini-batch'' computations. Such batch processing jobs would be performed either relatively infrequently on streaming data or upon completion of a model simulation. Our data analytics should include tooling for dealing with batch computations.
-    \item Storage: The way in which we store our data should be heavily influenced by the types of questions we intend to ask of our data. Broadly speaking, we will need to deal with two types of data: real-world data and model generated data.
-
-    There are two kinds of questions that we will want to ask of our model generated data:
-        \begin{enumerate}
-            \item Key-Value databases are designed for storing data in a schema-less way. In a key-value store, each datum consists of an indexed key and a value, hence the name. 
-            \item Relationship questions: What does the network structure of interbank lending look like? What does the input-output (IO) production network look like? Graph databases are designed for data whose relations are well represented as a graph and has elements which are interconnected, with an undetermined number of relations between them.
-        \end{enumerate} 
-    The modeling layer should have read/write access to a scalable data store. Additionally, the data analytics components will need a source of input data. In order to avoid simulations being I/O bound, our data store should have extremely fast write access.
+    \item Storage: The modeling layer should have read/write access to a scalable data store. Additionally, the data analytics components will need a source of input data. In order to avoid simulations being I/O bound, our data store should have extremely fast write access.
 \end{itemize}
 
 \subsection{Modeling Layer}
@@ -99,6 +92,13 @@ Important characteristics of our modeling layer.  Scalability. We want to build 
 \centering
 \includegraphics[width=10cm]{img/coarse-grain-model-layer.pdf}
 \caption{High-level design of the modeling layer.}
+\end{figure}
+
+High-level description of an agent in our framework is a layered collection of behaviors and decision rules...
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/hierarchical-actor.pdf}
+\caption{???}
 \end{figure}
 
 \subsubsection{Communication Layer}
@@ -121,6 +121,9 @@ Several key features distinguish \textit{economic} agents from more generic type
     \item Expectations formation rules: A large number of various expectation formation rules have been proposed in the literature. Useful references for expectation formation rules are \href{http://feb.kuleuven.be/fac/Slides_Degrauwe/HomHBchapter23.pdf}{Hommes (2006)}, \href{http://econ.columbia.edu/files/econ/content/hommes_background_material_2.pdf}{Anufriev and Hommes (2012)}, \href{http://www.columbia.edu/~mw2230/AREcon.pdf}{Woodford (2013)}, \href{http://www.emeraldinsight.com/doi/pdfplus/10.1108/S0193-230620140000017002}{Assenza et al (2014)}.
 \end{itemize}
 
+Stock flow consistency is an important property of large-scale macro models, but is not a property that makes sense to impose in general for our framework.  Need to have a behavioral module that implements stock flow consistent accounting rules.
+
+Balance sheets, contracts, and CounterParty behavior seem like and OK place to implement stock flow consistent accounting rules.
 % \subsection{\texttt{CounterpartyActor} API}
 % Perhaps surprisingly, some economists have already been thinking along these lines:
 
@@ -194,11 +197,27 @@ We will not need to implement the cluster management layer.  Instead we will sim
 \caption{Macro-grain architecture for ScalABM. }
 \end{figure}
 
+\subsubsection{Modeling environment}
+Browser based GUI interfaces should be built using the \href{https://www.playframework.com/}{Play} web application framework. The Play framework cleanly integrates Javascript libraries for real-time data analysis and visualization with backend model libraries.
+
+\subsubsection{Data Management}
+Broadly speaking, we will need to store two types of data: real-world data and model generated data. The way in which we store our data should be heavily influenced by the types of questions we intend to ask of our data. 
+There are two kinds of questions that we will want to ask of our model generated data:
+\begin{enumerate}
+    \item Questions about cross-sectional and time series properties of model generated data. For these types of questions NoSQL Key-Value databases, such as \href{http://cassandra.apache.org/}{Cassandra},  are ideal data stores. Key-Value databases are designed for storing data in a schema-less way. In a key-value store, each datum consists of an indexed key and a value, hence the name. 
+    \item Questions about the network structures between model agents. For questions about network structure, graph databases are ideal.  Graph databases, such as Neo4j, are designed for data whose relations are well represented as a graph and has elements which are interconnected, with an undetermined number of relations between them.
+\end{enumerate} 
+
 
 \subsection{Modeling Layer}
+ScalABM leverages the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency as implemented in the \href{http://akka.io/}{Akka} library to model both direct and indirect communication between economic agents using concurrent, asynchronous message passing.\footnote{
+%
+Akka is a toolkit and runtime for building highly concurrent, distributed, and resilient message-driven applications on the JVM.
+%
+}
 \begin{figure}[H]
 \centering
-\includegraphics[width=10cm]{img/hierarchical-actor.pdf}
+\includegraphics[width=10cm]{img/hierarchical-actor-2.pdf}
 \caption{???}
 \end{figure}
 

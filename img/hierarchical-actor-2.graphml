@@ -20,7 +20,8 @@
           <y:Geometry height="419.72399999999976" width="560.4999999999998" x="110.75000000000023" y="49.13800000000012"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="75.630859375" x="242.4345703124999" y="4.0">Agent</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="62.88671875" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="247.8232421875" x="156.3383789062499" y="4.0">Agent
+(Akka Actor, parent)</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -31,7 +32,8 @@
           <y:Geometry height="112.75" width="539.0239999999999" x="121.00000000000011" y="225.5"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.5546875" modelName="internal" modelPosition="b" textColor="#000000" visible="true" width="191.490234375" x="173.76688281249994" y="81.1953125">Behavioral Modules</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="51.109375" modelName="internal" modelPosition="b" textColor="#000000" visible="true" width="224.947265625" x="157.03836718749994" y="57.640625">Behavioral Modules
+(Akka Actors, children)</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -114,7 +116,8 @@
           <y:Geometry height="112.75" width="539.0239999999999" x="121.00000000000011" y="345.5"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="27.5546875" modelName="internal" modelPosition="b" textColor="#000000" visible="true" width="246.158203125" x="146.43289843749994" y="81.1953125">Individual Decision Rules</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="20" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="51.109375" modelName="internal" modelPosition="b" textColor="#000000" visible="true" width="287.974609375" x="125.52469531249994" y="57.640625">Individual Decision Rules
+(Akka Actors, grand children)</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
