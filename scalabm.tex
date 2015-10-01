@@ -116,7 +116,7 @@ High-level description of an agent in our framework is a layered collection of b
 \begin{figure}[H]
 \centering
 \includegraphics[width=10cm]{img/hierarchical-actor.pdf}
-\caption{???}
+\caption{An agent in our framework is a layered collection of behaviors and decision rules.}
 \end{figure}
 
 Concurrent communication between real-world economic agents is a fundamental fact of economic life. Inter-agent communication can be either direct (i.e., ``peer-to-peer'') or indirect (i.e., via market institutions). In order to model both direct and indirect communication between economic agents in our framework we leverage the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency.   to model both direct and indirect communication between economic agents as concurrent, asynchronous message passing.
@@ -125,7 +125,6 @@ t treats ``actors'' as the universal primitives of concurrent computation: in re
 
 Stock flow consistency is an important property of large-scale macro models, but is not a property that makes sense to impose in general for our framework.  Need to have a behavioral module that implements stock flow consistent accounting rules.
 
-Balance sheets, contracts, and CounterParty behavior seem like and OK place to implement stock flow consistent accounting rules.
 % \subsection{\texttt{CounterpartyActor} API}
 % Perhaps surprisingly, some economists have already been thinking along these lines:
 
@@ -167,6 +166,12 @@ Balance sheets, contracts, and CounterParty behavior seem like and OK place to i
 %     \item a \texttt{ContractActor} should be able to value its \texttt{Commitment}.
 % \end{itemize}
 % Conceptually, a \texttt{ContractActor} represents a channel for communication between the issuer and the counterparty to the underlying \texttt{Commitment}.
+Our economic agents will need to condition their decisions on an information set.  In contrast to (most) DSGE models, information sets in our framework will be highly heterogeneous. The information set for any particular economic agent should consist of three components:
+\begin{itemize}
+    \item Private information: information that is idiosyncratic to a particular agent. 
+    \item Public information: information that a particular agent shares with one or more agents.
+    \item Global information: information that is shared between all agents.
+\end{itemize}
 
 \begin{figure}[H]
 \centering
@@ -176,16 +181,17 @@ Balance sheets, contracts, and CounterParty behavior seem like and OK place to i
 
 
 \paragraph{Information Layer}
-Our economic agents will need to condition their decisions on an information set.  In contrast to (most) DSGE models, information sets in our framework will be highly heterogeneous. The information set for any particular economic agent should consist of three components:
-\begin{itemize}
-    \item Private information: information that is idiosyncratic to a particular agent. 
-    \item Public information: information that a particular agent shares with one or more agents.
-    \item Global information: information that is shared between all agents.
-\end{itemize}
+Markets are institutions that aggregate data: markets take agent decisions/choices as raw data which they aggregate into prices and quantities. These prices and quantities are, typically, but not always observable by others.  Most market prices are public information.
 \begin{figure}[H]
 \centering
 \includegraphics[width=10cm]{img/information-sets.pdf}
 \caption{Information set for a particular economic agent.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/information-layer.pdf}
+\caption{Information layer consists of the markets API and a public information API.}
 \end{figure}
 
 \paragraph{Data Analytics Layer}
