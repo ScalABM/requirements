@@ -17,7 +17,7 @@
     <node id="n0">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="424.84000000000003" width="565.8799999999999" x="188.06000000000006" y="115.68"/>
+          <y:Geometry height="368.84000000000003" width="565.8799999999999" x="188.06000000000006" y="115.68"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="150.044921875" x="207.91753906249994" y="4.0">Model Layer</y:NodeLabel>
@@ -31,7 +31,7 @@
           <y:Geometry height="55.03999999999999" width="305.96000000000015" x="313.4199999999999" y="403.44000000000005"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="216.19482421875" x="44.88258789062513" y="10.798320312499982">Behavioural Layer</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="216.19482421875" x="44.882587890625075" y="10.798320312499982">Behavioural Layer</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -42,7 +42,7 @@
           <y:Geometry height="55.039999999999964" width="305.96000000000015" x="313.4199999999999" y="283.44000000000005"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="218.35546875" x="43.80226562500013" y="10.798320312499982">Information Layer</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="218.35546875" x="43.802265625000075" y="10.798320312499982">Information Layer</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -58,20 +58,8 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n4">
-      <data key="d6">
-        <y:ShapeNode>
-          <y:Geometry height="55.03999999999999" width="305.96000000000015" x="313.4199999999999" y="470.4800000000001"/>
-          <y:Fill hasColor="false" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="280.66015625" x="12.649921875000075" y="10.798320312499925">Communications Layer</y:NodeLabel>
-          <y:Shape type="roundrectangle"/>
-        </y:ShapeNode>
-      </data>
-    </node>
     <edge id="e0" source="n1" target="n2">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="104.09999999999997" sy="-3.0" tx="104.59999999999997" ty="-0.5"/>
@@ -92,7 +80,6 @@
     </edge>
     <edge id="e1" source="n2" target="n3">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="104.59999999999997" sy="-1.5" tx="104.10000000000002" ty="-5.0"/>
@@ -113,7 +100,6 @@
     </edge>
     <edge id="e2" source="n2" target="n1">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-104.40000000000003" sy="3.5" tx="-104.90000000000005" ty="0.0"/>
@@ -133,7 +119,6 @@
     </edge>
     <edge id="e3" source="n3" target="n2">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-105.57999999999993" sy="1.2080000000000837" tx="-105.07999999999998" ty="-1.0919999999999277"/>

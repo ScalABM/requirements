@@ -68,7 +68,18 @@ See figure 1 from \href{./fast-data-big-data-evolved.pdf}{Wampler (2015)} for a 
 \end{figure}
 
 \subsubsection{Cluster management} 
-Our strategy for building and running models at scale is to leverage massively multi-core cloud computing clusters.  In order to pursue this scaling strategy our platform will need to have a cluster manager. From Wikipedia: A cluster manager usually is a backend graphical user interface (GUI) or command-line software that runs on one or all cluster nodes (in some cases it runs on a different server or cluster of management servers.) The cluster manager works together with a cluster management agent. These agents run on each node of the cluster to manage and configure services, a set of services, or to manage and configure the complete cluster server itself (see super computing.) In some cases the cluster manager is mostly used to dispatch work for the cluster (or cloud) to perform. In this last case a subset of the cluster manager can be a remote desktop application that is used not for configuration but just to send work and get back work results from a cluster. 
+Current approaches to running large-scale ABMs leverage either...
+\begin{itemize}
+    \item University/national super-computers: Use FLAME or Repast to build large-scale, complicated models. Both FLAME and Repast use some kind of message passing (but NOT ``peer-to-peer'' message passing) under the hood.
+    \item GPU computing: Use CUDA, FLAME GPU (or similar) to build large-scale, simple models.
+\end{itemize}
+Our strategy for running ABMs at scale will instead leverage massively multi-core cloud computing clusters that are quickly becoming the dominant form of large-scale computing outside of academia.
+
+Benefits to our approach:
+\begin{itemize}
+    \item Outsourcing of cluster management to third party provider. ABMs built using our framework can be ``containerized'' and sent off to a third-party cloud computing service provider such as \href{http://aws.amazon.com/}{AWS}, \href{https://cloud.google.com/compute/}{Google Compute Engine}, \href{https://www.heroku.com/}{Heroku}, \href{https://mesosphere.com/}{Mesosphere}, etc. This third party provider then handles all of the intricacies involved with scaling up the model on the cluster to meet our needs.
+    \item No longer dependent on access to university/national super-computers enhances the reproducibility or our research.  The ability to ``containerize'' an ABM built using out framework means that researchers not directly involved in developing a model can still access all material necessary to completely reproduce that model's output. The container can be used to run the model locally on a laptop or sent to a third party provider to scale up via the cloud. 
+\end{itemize}
 
 \subsubsection{Modeling environment}
 The modeling environment consists of user interfaces and the modeling layer. The ``front end'' of our modeling environment should consist of two, complementary user interfaces.
@@ -76,23 +87,30 @@ The modeling environment consists of user interfaces and the modeling layer. The
     \item A user-friendly, web-browser based graphical user interface (GUI). The GUI should facilitate interactive exploration of an existing model in near real-time.  The GUI should support real-time data streaming, analysis, and visualization.
     \item An intuitive and consistent command line interface (CLI). In addition to facilitating efficient batch processing of model simulations (i.e., parameter sweeps), the CLI should allow for easy replication of any particular model simulation.
 \end{enumerate}
-The ``back end'' of our modeling environment is the modeling layer which consists of the actual source code libraries used to implement our ABMs. The modeling layer should facilitate the construction of new ABMs out of pre-existing, modular components.  Model configuration, including specification of all model parameters as well as the ``wiring'' of model components, should be specified in configuration files that are separate from the actual source code.
 
-\subsubsection{Data Management}
-In order for our ABMs to be data-driven, we need to think carefully about how our framework we will manage the flow and storage of data (both model generated data as well as real-world data). There are (at least!) three components to data management: access, analytics, and storage.
+The ``back end'' of our modeling environment is the modeling layer which consists of the actual source code libraries used to implement our ABMs. Important characteristics of our modeling layer:  
+
 \begin{itemize}
-    \item Access: A running ABM will generate a large volume of data. Model generated data might be stored, sent to a data analytics engine, or logged out to a file(s). Additionally, data will likely flow in the reverse direction.  In particular, agents in a running ABM may need to read data from a data store (for example, we might wish to initialize economic agents using real-world data).
-    \item Analytics: A running ABM is a continuous source of data whose volume is not predetermined. Put another way: ABMs generate \href{http://www.reactive-streams.org/}{reactive data streams}.  Our data analytics components should therefore include tooling for processing and analyzing streaming data. In addition to processing and analyzing streaming data, we will also need to preform various ``batch'' or ``mini-batch'' computations. Such batch processing jobs would be performed either relatively infrequently on streaming data or upon completion of a model simulation. Our data analytics should include tooling for dealing with batch computations.
-    \item Storage: The modeling layer should have read/write access to a scalable data store. Additionally, the data analytics components will need a source of input data. In order to avoid simulations being I/O bound, our data store should have extremely fast write access.
+    \item The modeling layer should facilitate the construction of new ABMs out of pre-existing, modular components. Novel model components should be able to easily extend pre-existing components. 
+    \item Model configuration, including specification of all model parameters as well as the ``wiring'' of model components, should be specified in configuration files that are separate from the actual source code.
 \end{itemize}
 
-\subsection{Modeling Layer}
-Important characteristics of our modeling layer.  Scalability. We want to build models with 
-\begin{figure}[H]
+The modeling layer itself is organized into a number of sub-layers: a behavioral layer, an information layer, and a data analytics layer. See figure \ref{img-figure-2}.
+\begin{figure}[H]\label{img-figure-2}
 \centering
 \includegraphics[width=10cm]{img/coarse-grain-model-layer.pdf}
-\caption{High-level design of the modeling layer.}
+\caption{High-level organization of the modeling layer.}
 \end{figure}
+
+\paragraph{Behavioral layer}
+An economy is populated with many seemingly disparate types of agents (i.e., consumers, producers, financiers, government, etc).  Our goal with the behavioral layer is to distill the core essence (in terms of data and behaviors) of these different agents into a multi-layered API defining a generic \textit{economic agent} that can then be specialized to the various types of economic agents needed for any particular model.
+
+Several key features distinguish \textit{economic} agents from more generic types of agents. At a minimum these features include: purpose driven (or goal oriented) behaviour, an ability to learn, and the ability to anticipate future events. This suggests that our behavioral layer will need APIs for...
+\begin{itemize}
+    \item Goals or objectives (and their associated behavioral rules): Our goals/objectives API needs to be as un-opinionated as possible as prospective users of ScalABM are likely to have strong opinions on how to define appropriate goals and decision rules for their agents. At the same time, we will need to have some type of underlying null model of agent goals/objectives. Utility maximization, Belief-Desire-Intent (BDI), probabilistic discrete choice (AKA, random utility maximization) are possibilities.
+    \item Learning rules: A large number of various learning rules/mechanisms have been proposed in the academic literature. Roughly, learning rules seem to fall into two camps: learning through previous experience (i.e., reinforcement learning) and learning through observation (i.e., belief learning). Useful references for learning rules for ABMs are the two handbook chapters \href{http://web.uvic.ca/~mingkang/econ353/project/Brenner.pdf}{Brenner (2006)} and \href{http://www.socsci.uci.edu/~duffy/papers/duffy2006.pdf}{Duffy (2006)}.
+    \item Expectations formation rules: A large number of various expectation formation rules have been proposed in the literature. Useful references for expectation formation rules are \href{http://feb.kuleuven.be/fac/Slides_Degrauwe/HomHBchapter23.pdf}{Hommes (2006)}, \href{http://econ.columbia.edu/files/econ/content/hommes_background_material_2.pdf}{Anufriev and Hommes (2012)}, \href{http://www.columbia.edu/~mw2230/AREcon.pdf}{Woodford (2013)}, \href{http://www.emeraldinsight.com/doi/pdfplus/10.1108/S0193-230620140000017002}{Assenza et al (2014)}.
+\end{itemize}
 
 High-level description of an agent in our framework is a layered collection of behaviors and decision rules...
 \begin{figure}[H]
@@ -101,25 +119,9 @@ High-level description of an agent in our framework is a layered collection of b
 \caption{???}
 \end{figure}
 
-\subsubsection{Communication Layer}
-Concurrent communication between real-world economic agents is a fundamental fact of economic life. Inter-agent communication can be either direct (i.e., ``peer-to-peer'') or indirect (i.e., via market institutions). In order to model both direct and indirect communication between economic agents, our framework  the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency to model both direct and indirect communication between economic agents as concurrent, asynchronous message passing.
+Concurrent communication between real-world economic agents is a fundamental fact of economic life. Inter-agent communication can be either direct (i.e., ``peer-to-peer'') or indirect (i.e., via market institutions). In order to model both direct and indirect communication between economic agents in our framework we leverage the \href{https://en.wikipedia.org/wiki/Actor_model}{Actor model} of concurrency.   to model both direct and indirect communication between economic agents as concurrent, asynchronous message passing.
 
 t treats ``actors'' as the universal primitives of concurrent computation: in response to a message that it receives, an actor can make local decisions, create more actors, send more messages, and determine how to respond to the next message received.
-
-In order to make progress we need to impose some structure on the type of messages passed between agents.  This structure will have two forms 
-
-
-Communication protocols: Just as the ACL places structure on the actual messages being passed between agent, the communication protocols impose structure on sequences of messages.
-
-\subsubsection{Behavioral layer}
-An economy is populated with many seemingly disparate types of agents (i.e., consumers, producers, financiers, government, etc).  Our goal with the behavioral layer is to distill the core essence (in terms of data and behaviors) of these different agents into a multi-layered API defining a generic \textit{economic agent} that can then be specialized to the various types of economic agents needed for any particular model. Note that the API for our economic agent will build upon the communicating agent API.
-
-Several key features distinguish \textit{economic} agents from more generic types of agents. At a minimum these features include: purpose driven (or goal oriented) behaviour, an ability to learn, and the ability to anticipate future events. This suggests that our behavioral layer will need APIs for...
-\begin{itemize}
-    \item Goals or objectives (and their associated behavioral rules): Our goals/objectives API needs to be as un-opinionated as possible as prospective users of ScalABM are likely to have strong opinions on how to define appropriate goals and decision rules for their agents. At the same time, we will need to have some type of underlying null model of agent goals/objectives. Utility maximization, Belief-Desire-Intent (BDI), probabilistic discrete choice (AKA, random utility maximization) are possibilities.
-    \item Learning rules: A large number of various learning rules/mechanisms have been proposed in the academic literature. Roughly, learning rules seem to fall into two camps: learning through previous experience (i.e., reinforcement learning) and learning through observation (i.e., belief learning). Useful references for learning rules for ABMs are the two handbook chapters \href{http://web.uvic.ca/~mingkang/econ353/project/Brenner.pdf}{Brenner (2006)} and \href{http://www.socsci.uci.edu/~duffy/papers/duffy2006.pdf}{Duffy (2006)}.
-    \item Expectations formation rules: A large number of various expectation formation rules have been proposed in the literature. Useful references for expectation formation rules are \href{http://feb.kuleuven.be/fac/Slides_Degrauwe/HomHBchapter23.pdf}{Hommes (2006)}, \href{http://econ.columbia.edu/files/econ/content/hommes_background_material_2.pdf}{Anufriev and Hommes (2012)}, \href{http://www.columbia.edu/~mw2230/AREcon.pdf}{Woodford (2013)}, \href{http://www.emeraldinsight.com/doi/pdfplus/10.1108/S0193-230620140000017002}{Assenza et al (2014)}.
-\end{itemize}
 
 Stock flow consistency is an important property of large-scale macro models, but is not a property that makes sense to impose in general for our framework.  Need to have a behavioral module that implements stock flow consistent accounting rules.
 
@@ -166,9 +168,14 @@ Balance sheets, contracts, and CounterParty behavior seem like and OK place to i
 % \end{itemize}
 % Conceptually, a \texttt{ContractActor} represents a channel for communication between the issuer and the counterparty to the underlying \texttt{Commitment}.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{img/behavior-layer.pdf}
+\caption{???}
+\end{figure}
 
 
-\subsubsection{Information Layer}
+\paragraph{Information Layer}
 Our economic agents will need to condition their decisions on an information set.  In contrast to (most) DSGE models, information sets in our framework will be highly heterogeneous. The information set for any particular economic agent should consist of three components:
 \begin{itemize}
     \item Private information: information that is idiosyncratic to a particular agent. 
@@ -181,15 +188,21 @@ Our economic agents will need to condition their decisions on an information set
 \caption{Information set for a particular economic agent.}
 \end{figure}
 
-\subsubsection{Data Analytics Layer}
+\paragraph{Data Analytics Layer}
 The data analytics layer encapsulates the functionality for aggregating raw data into additional structured data that agents can use for making decisions.  Specifically, the data analytics layer would contain classes and methods for computing standard macro economic indicators (i.e., real and nominal GDP, stock market index, house price index, consumer price index, unemployment rates, etc). Users should be able to extend the data analytics capabilities as needed for a particular model.
+
+
+\subsubsection{Data Management}
+In order for our ABMs to be data-driven, we need to think carefully about how our framework we will manage the flow and storage of data (both model generated data as well as real-world data). There are (at least!) three components to data management: access, analytics, and storage.
+\begin{itemize}
+    \item Access: A running ABM will generate a large volume of data. Model generated data might be stored, sent to a data analytics engine, or logged out to a file(s). Additionally, data will likely flow in the reverse direction.  In particular, agents in a running ABM may need to read data from a data store (for example, we might wish to initialize economic agents using real-world data).
+    \item Analytics: A running ABM is a continuous source of data whose volume is not predetermined. Put another way: ABMs generate \href{http://www.reactive-streams.org/}{reactive data streams}.  Our data analytics components should therefore include tooling for processing and analyzing streaming data. In addition to processing and analyzing streaming data, we will also need to preform various ``batch'' or ``mini-batch'' computations. Such batch processing jobs would be performed either relatively infrequently on streaming data or upon completion of a model simulation. Our data analytics should include tooling for dealing with batch computations.
+    \item Storage: The modeling layer should have read/write access to a scalable data store. Additionally, the data analytics components will need a source of input data. In order to avoid simulations being I/O bound, our data store should have extremely fast write access.
+\end{itemize}
 
 \section{Implementation}
 
 \subsection{Platform architecture}
-
-\subsubsection{Cluster Management}
-We will not need to implement the cluster management layer.  Instead we will simply ``containerize'' an ABM built using our framework and send it off to a third-party cloud computing service provider such as \href{http://aws.amazon.com/}{AWS}, \href{https://www.heroku.com/}{Heroku}, \href{https://mesosphere.com/}{Mesosphere}, etc.  We can then choose the scale at which we wish to run the model. Once the model is running on the cluster we can configure the scale(s) at which we wish to simulate the model and the cloud computing service provider will handle the rest.
 
 \begin{figure}[H]
 \centering
