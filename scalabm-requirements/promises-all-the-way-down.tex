@@ -1,0 +1,253 @@
+\documentclass[a4paper]{article}
+\usepackage{graphics}
+%%\usepackage[english,greek]{babel}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{1.8mm}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proof}{Proof}
+\title{It's promises (almost) all the way down...}
+\date{\today}
+\author{Daniel Tang, David Pugh, J. Doyne Famer}
+%%\linespread{1.3}
+
+\begin{document}
+%%\selectlanguage{english}
+\maketitle
+
+
+\section{Motivation}
+Roughly speaking our work is motivated by two key ideas:\footnote{
+%
+Don't forget to cite work by John G. and various papers by Kiyotaki and Moore (possibly others as well)!
+%
+} 
+\begin{enumerate}
+	\item ``All economic agents are banks'' - Hyman Minksy
+	\item ``All interactions between banks involve a swap of IOUs'' - Perry Mehrling
+\end{enumerate}
+We have designed our low-level API around a slight translation of the above ideas:
+\begin{enumerate}
+	\item each economic \texttt{Actor} is a ``bank'';
+	\item each interaction between economic \texttt{Actors} involves a \texttt{transfer} of a \texttt{Promise}.
+\end{enumerate}
+
+This immediately raises the following questions:
+\begin{enumerate}
+	\item What do we mean by an economic \texttt{Actor}?
+	\item What we we mean when we say that all economic \texttt{Actors} are "banks"?
+	\item What is a \texttt{Promise}?
+	\item What does it mean to \texttt{transfer} a \texttt{Promise}?
+\end{enumerate}
+
+\section{Actor}
+In this section we define the low-level API for an economic \texttt{Actor} and define what it means to say that each economic \texttt{Actor} is a ``bank.''
+
+\begin{enumerate}
+	\item each actor has a balance sheet containing assets and liabilities;
+	\item each actor faces a sequence of cash-flow constraints.
+\end{enumerate}
+
+\section{In the beginning...}
+
+\subsection{Defining a \texttt{Good}}
+
+\subsection{\texttt{Actions} over \texttt{Goods}}
+
+\section{Promises, promises...}
+Borrowed title of this section from 1997 paper by John G. John G. defines an asset as a promise together with some collateral.
+
+\subsection{Definition of a \texttt{Promise}}
+A \texttt{Promise} represents a commitment between a \texttt{promisor} and some \texttt{promisee} to undertake certain \texttt{actions}, potentially involving both \texttt{goods} and additional \texttt{promises}, specified by some \texttt{Sentence} \texttt{when} a certain \texttt{StateofAffairs} has occurred. 
+
+These considerations lead to the following low-level interface for the \texttt{Promise} trait.
+
+\begin{verbatim}
+trait Promise {
+
+  def promisor: ActorRef
+ 
+  def promisee: ActorRef
+  
+  def actions: Sentence
+  
+  def when: StateOfAffairs
+
+}
+\end{verbatim}
+
+Want to allow for the possibility that some promises can not be given (and therefore not transferred or exchanged) from one \texttt{Actor} to another \texttt{Actor}. To capture this feature we define a separate \texttt{GiveablePromise} trait.
+
+\begin{verbatim}
+trait GiveablePromise extends Promise {
+
+  val isGiveable: Boolean
+
+}
+\end{verbatim}
+
+\subsection{\texttt{Actions} over \texttt{Promises}}
+
+\subsubsection{Uni-lateral \texttt{Actions}}
+An \texttt{Actor} $i$ can \textit{unilaterally} decide to perform any of the following \texttt{Actions} with a \texttt{Promise}. 
+\begin{itemize}
+	\item \texttt{create} a new \texttt{Promise}: When an \texttt{Actor} creates a new \texttt{Promise}, the \texttt{Actor} becomes its \texttt{promisor} and the new \texttt{Promise} becomes a liability for that \texttt{Actor}. Similarly, the new \texttt{Promise} becomes an asset for which ever \texttt{Actor} is the \texttt{promisee}.
+	\item \texttt{accept} a \texttt{Promise}: If an \texttt{Actor} $i$ chooses to \texttt{accept} a \texttt{Promise} from another \texttt{Actor} $j$, then the \texttt{Promise} is added as an asset to the balance sheet of \texttt{Actor} $i$ and as a liability to the balance sheet of \texttt{Actor} $j$.
+	\item \texttt{reject} a \texttt{Promise}: An \texttt{Actor} $i$ can always choose to \texttt{reject} (i.e., \textit{not} \texttt{accept}) a \texttt{Promise} from another \texttt{Actor} $j$. Rejected promises are not added to balance sheets.
+	\item \texttt{fulfill} a \texttt{Promise}: An \texttt{Actor} $i$ who is the \texttt{promisor} of a \texttt{Promise} may choose to perform \texttt{actions} specified in the \texttt{Sentence} \texttt{when} a certain \texttt{StateOfAffairs} has occurred. Once a \texttt{Promise} is successfully fulfilled, it is removed from both the balance sheet of its \texttt{promisor} and the balance sheet of its \texttt{promisee}.
+	\item \texttt{break} a \texttt{Promise}: An \texttt{Actor} $i$ who is the \texttt{promisor} of a \texttt{Promise} may choose \textit{not} to perform \texttt{actions} specified in the \texttt{Sentence} \texttt{when} a certain \texttt{StateOfAffairs} has occurred. A decision to \texttt{break} a \texttt{Promise} is the same as a decision \textit{not} to \texttt{fulfill} a \texttt{Promise}.\footnote{
+	%
+	Breaking a \texttt{Promise} may or may not have consequences. Should consequences be specified in the original \texttt{Promise}? I think so.
+	%
+	} 
+	\item \texttt{destroy} a \texttt{Promise}: An \texttt{Actor} $i$ who is the \texttt{promisee} of a \texttt{Promise} may choose to \texttt{destroy} that \texttt{Promise} prior to a certain \texttt{StateOfAffairs} occurring. Once destroyed a \texttt{Promise} is removed from both the balance sheet of the \texttt{promisee} \textit{and} the balance sheet of the \texttt{promisor}.   
+	\item \texttt{give} a \texttt{Promise}: An \texttt{Actor} $i$ who is the \texttt{promisee} of a \texttt{Promise} may choose to \texttt{give} that \texttt{Promise} to another \texttt{Actor} $j$.
+	\item \texttt{redeem} a \texttt{Promise}:  An \texttt{Actor} $i$ who is the \texttt{promisee} of a \texttt{Promise} may choose to \texttt{redeem} that \texttt{Promise} after a certain \texttt{StateOfAffairs} has occurred. Redemption of a \texttt{Promise} can be thought of as a request that the \texttt{promisor} of that \texttt{Promise} \texttt{fulfill} the \texttt{Promise}.
+\end{itemize}
+
+The above actions can be combined into a low-level, \texttt{PromiseMaker} trait that extends the \texttt{Actor} base trait:
+\begin{verbatim}
+trait PromiseMaker extends Actor {
+  
+  def create(promisee: ActorRef,
+             actions: Sentence,
+             when: StateOfAffairs): Promise
+  
+  def destroy(promise: Promise): Unit
+  
+  def accept(promise: Promise): Unit
+  
+  def reject(promise: Promise): Unit
+  
+  def fulfill(promise: Promise): Unit
+  
+  def break(promise: Promise): Unit
+  
+  def give(promise: Promise, other: ActorRef): Unit
+  
+  def redeem(promise: Promise): Unit
+  
+}
+\end{verbatim}
+
+\subsubsection{Cooperative \texttt{Actions}}
+Two \texttt{Actors} $i$ and $j$ can cooperate \textit{bi-laterally} to perform additional actions over \texttt{Promises}:
+\begin{itemize}
+	\item \texttt{transfer} a \texttt{Promise}: An \texttt{Actor} $i$ who is the \texttt{promisee} of the \texttt{Promise} can \texttt{transfer} a \texttt{Promise} to \texttt{Actor} $j$ as follows:
+	\begin{enumerate}
+		\item \texttt{Actor} $i$ \texttt{give} \texttt{Promise} to \texttt{Actor} $j$
+		\item \texttt{Actor} $j$ \texttt{accept} \texttt{Promise} from \texttt{Actor} $i$
+	\end{enumerate}
+	\item \texttt{exchange} of \texttt{Promises}: Two \texttt{Actors} $i$ and $j$ who are the \texttt{promisees} of different \texttt{Promises} can \texttt{exchange} these \texttt{Promises} with one another as follows:
+	\begin{enumerate}
+		\item \texttt{Actor} $j$ \texttt{create} new \texttt{Promise} \{\texttt{give} existing \texttt{Promise} to \texttt{Actor} $i$\}.
+		\item \texttt{Actor} $j$ \texttt{transfer} new \texttt{Promise} to \texttt{Actor} $i$.
+		\item \texttt{Actor} $i$ \texttt{transfer} existing \texttt{Promise} to \texttt{Actor} $j$
+		\item \texttt{Actor} $j$ \texttt{fulfill} \texttt{Promise} to \texttt{Actor} $i$
+	\end{enumerate}
+\end{itemize}
+A few things are worth noting about a bi-lateral \texttt{exchange}. First, by choosing to \texttt{fulfill} the new \texttt{Promise} in step 4, \texttt{Actor} $j$ gives his existing \texttt{Promise} to \texttt{Actor} $i$ (which completes the \texttt{exchange}). Second, the new \texttt{Promise} issued by \texttt{Actor} $j$ in step 1 involved a promise to \texttt{give} and \textit{not} a promise to \texttt{transfer} an existing  \texttt{Promise} to \texttt{Actor} $i$.\footnote{
+%
+Should it be possible to for an \texttt{Actor} to create a \texttt{Promise} that commits \textit{other} \texttt{Actors} to perform actions? Do we have any real world examples?.
+%
+}
+Finally, note that an \texttt{exchange} could take place with \texttt{Actor} $i$ creating the new \texttt{Promise} in step 1. The important point is that either \texttt{Actor} $i$ or \texttt{Actor} $j$ (not necessarily both) must be able to \textit{credibly} commit to \texttt{give} its \texttt{Promise} upon receipt of the other's \texttt{Promise}.\footnote{
+%
+The credibility of any particular \texttt{Promise} should be endogenously determined within the model and \textit{not} imposed by us \textit{a priori}
+%
+}
+
+It is interesting to compare the above bi-lateral exchange mechanism with a multi-lateral exchange mechanism involving cooperation between three \texttt{Actors} $i$, $j$, and $k$. Two \texttt{Actors} $i$, $j$ who are the \texttt{promisees} of different \texttt{Promises} can \texttt{exchange} these \texttt{Promises} using \texttt{Actor} $k$ as an intermediary as follows:
+\begin{enumerate}
+	\item \texttt{Actor} $k$ \texttt{create} new \texttt{Promise} \{\texttt{give} \texttt{Actor} $j$ \texttt{Promise} to \texttt{Actor} $i$\}.
+	\item \texttt{Actor} $k$ \texttt{create} new \texttt{Promise} \{\texttt{give} \texttt{Actor} $i$ \texttt{Promise} to \texttt{Actor} $j$\}.
+	\item \texttt{Actor} $k$ \texttt{transfer} new \texttt{Promise} to \texttt{Actor} $i$.
+	\item \texttt{Actor} $k$ \texttt{transfer} new \texttt{Promise} to \texttt{Actor} $j$.
+	\item \texttt{Actor} $i$ \texttt{transfer} existing \texttt{Promise} to \texttt{Actor} $k$
+	\item \texttt{Actor} $j$ \texttt{transfer} existing \texttt{Promise} to \texttt{Actor} $k$
+	\item \texttt{Actor} $k$ \texttt{fulfill} \texttt{Promise} to \texttt{Actor} $i$
+	\item \texttt{Actor} $k$ \texttt{fulfill} \texttt{Promise} to \texttt{Actor} $j$
+\end{enumerate}
+An important feature of this multi-lateral process is that, so long as \texttt{Actor} $k$ can \textit{credibly} commit to \textit{both} \texttt{Actors} $i$ \textit{and} $j$, then the exchange between $i$ and $j$ can take place even if \textit{neither} \texttt{Actor} $i$ \textit{nor} \texttt{Actor} $j$ can bi-laterally commit to \texttt{give} its \texttt{Promise} upon receipt of the other's \texttt{Promise}.\footnote{
+%
+The difference between multi-lateral and bi-lateral commitment has been stressed by many monetary theorists, in particular Kiyotaki and Moore in a series of papers.
+%
+}
+There are several interpretations of \texttt{Actor} $k$'s role in the above process.  One interpretation is that \texttt{Actor} $k$ is functioning as a central clearing party (CCP) for transactions between other \texttt{Actors}; another more institutional interpretation is that \texttt{Actor} $k$ is an actual \texttt{Market}.
+
+One final cooperative action needs to be specified: \texttt{transfer} of a \texttt{Promise} that is liability for one \texttt{Actor} to some other \texttt{Actor}.  An \texttt{Actor} $i$ who is the \texttt{promisor} on a \texttt{Promise} can only \texttt{transfer} that \texttt{Promise} to another \texttt{Actor} $j$ with permission from the \texttt{promisee} of that \texttt{Promise}, \texttt{Actor} $k$. 
+\begin{enumerate}
+	\item \texttt{Actor} $i$ \texttt{create} new \texttt{Promise} \{\texttt{give} \texttt{Actor} $j$ existing \texttt{Promise} \}.
+	\item \texttt{Actor} $k$ \texttt{accept} new \texttt{Promise}.
+	\item \texttt{Actor} $i$ \texttt{fulfill} \texttt{Promise} to \texttt{Actor} $k$.
+	\item \texttt{Actor} $j$ \texttt{accept} \texttt{Promise} from \texttt{Actor} $i$.
+\end{enumerate}
+
+\subsection{A language for \texttt{Promises}}
+Having defined the concepts of a \texttt{Good} and a \texttt{Promise} as well as sets of \texttt{actions} over \texttt{Goods} and \texttt{Promises} that can be performed by an \texttt{Actor} or groups of \texttt{Actors} to complete the API we need to define a language (grammar?) for building \texttt{Sentences} that describe valid \texttt{Promises}. 
+
+\subsubsection{Examples}
+Need to build a catalogue of examples demonstrating how to build common contracts using our language.
+%%\tableofcontents
+
+%%\appendix
+
+\section{\texttt{Markets} API}
+
+\begin{enumerate}
+	\item Must be able to add/remove routees from the router.
+	\item Must be able to handle situations when market has no buyers (sellers).
+\end{enumerate}
+
+The low-level \texttt{PromiseMaker} API already incorporates markets in the sense that an individual \texttt{PromiseMaker} can act is an intermediary between other \texttt{PromiseMakers} in order to facilitate the exchange of \texttt{Promises}.  In this instance a \texttt{PromiseMaker} is acting as a broker or  ``market maker'' and is functionally equivalent to a market institution.  
+
+However in order to streamline the implementation of market institutions in actual models we have designed a separate \texttt{Market} API on top of the low-level \texttt{PromiseMaker} API.  The design of the \texttt{Market} API is based around the notion that a market needs to have mechanisms for:
+\begin{enumerate}
+	\item matching \texttt{Promises} made by ``buyers'' with \texttt{Promises} made by ``sellers;''
+	\item clearing (i.e., finding an appropriate price and quantity) for each matched set of \texttt{Promises}.
+\end{enumerate}
+
+\begin{verbatim}
+trait Market extends PromiseMaker {
+
+  val router: akka.routing.Router
+
+}
+\end{verbatim}
+
+\subsection{Routing}
+Note that each \texttt{Market} has a \texttt{Router}.
+
+\texttt{MarketParticipants} can easily be added (removed) as \texttt{Routees} to a \texttt{Router} by sending \texttt{AddRoutee} or \texttt{RemoveRoutee} messages.
+
+\subsubsection{Routing logic}
+
+\subsection{TODO:}
+
+\begin{itemize}
+	\item Router will need to have a \texttt{DeathWatch} on all its \texttt{Routees}.
+\end{itemize}
+
+\subsection{\texttt{MarketParticipant} API}
+Since not all \texttt{Actors} in the model will need to participate in markets, seems a good idea to have a separate \texttt{MarketParticipant} trait that must be implemented in order for an \texttt{Actor} to participate in market transactions.
+
+\begin{verbatim}
+trait MarketParticipant {
+  ???
+}
+\end{verbatim}
+
+We implement separate interfaces for each of these functions: a \texttt{MatchingEngine} interface for generating matched sets of \texttt{Promises} and a \texttt{ClearingEngine} interface for finding an appropriate price and quantity for each matched set of \texttt{Promises}. 
+\begin{verbatim}
+trait MatchingEngine {
+  // details to be implemented
+}
+
+trait ClearingEngine {
+  // details to be implemented
+}
+\end{verbatim}
+Having separate interfaces for matching and clearing improves the clarity and maintainability of the code base while allowing for greater flexibility in the modeling of markets.
+
+
+\end{document}

@@ -130,7 +130,7 @@
           <y:Geometry height="60.220699643591956" width="157.23031855232216" x="820.9903185523222" y="479.88965017820396"/>
           <y:Fill color="#FFFFFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="126.44873046875" x="15.39079404178608" y="13.388670134295978">Streaming</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.443359375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="126.44873046875" x="15.39079404178608" y="13.388670134296035">Streaming</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
@@ -175,8 +175,8 @@
           <y:Geometry height="60.220699643591956" width="157.23031855232216" x="1008.615159276161" y="629.889650178204"/>
           <y:Fill color="#FFFFFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="3.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="62.88671875" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="107.16162109375" x="25.034348729285966" y="-1.333009553203965">Graph
-(Node4j)</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="25" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="62.88671875" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="81.96630859375" x="37.632004979285966" y="-1.333009553203965">Graph
+(Titan)</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
         </y:ShapeNode>
       </data>
