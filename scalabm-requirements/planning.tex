@@ -6,6 +6,7 @@
 \usepackage{float}
 %\usepackage{listings}
 \usepackage{natbib}
+\usepackage{paralist} 
 \usepackage[usenames, dvipsnames]{color}
 
 \title{Planning Document for ScalABM}
@@ -17,31 +18,36 @@
 
 \section{Objective}
 
-ScalABM is a \textit{community driven}, \textit{open-source} project to develop a \textit{user-friendly} modeling platform and tool stack for building \textit{scalable}, \textit{data-driven}, and \textit{reproducible} agent-based models (ABMs) of \textit{economic} systems on the JVM using \href{http://www.scala-lang.org/}{Scala} and \href{http://akka.io/}{Akka}. The purpose of this document is to provide both an introduction to ScalABM and to coordinate, prioritize, and plan future work on the project. 
+ScalABM is a \textit{community driven}, \textit{open-source} project to develop a \textit{user-friendly} modeling platform and tool stack for building \textit{scalable}, \textit{data-driven}, and \textit{reproducible} agent-based models (ABMs) of \textit{economic} systems on the JVM using \href{http://www.scala-lang.org/}{Scala} and \href{http://akka.io/}{Akka}. It is a suite of tools which allows users to build an agent-based model of their unique economic system with minimal development using existing plug-and-play modules. The purpose of this document is to provide both an introduction to ScalABM and to coordinate, prioritize, and plan future work on the project. 
 
 \section{Motivation}
 
 Failure to predict changes to economic systems is costly. According to the Dallas Federal Reserve Bank~\citep{Luttrell2013Costs} the recent financial crisis cost the United States on the order of 15 trillion dollars, suggesting a much larger cost for the world as a whole. These costs were significantly
 born by the poor, who suffered directly from the downturn in housing markets, which caused many to default.
 
-A variety of techniques have attempted to improve the prediction of economic behaviour. Dynamic Stochastic General Equilibrium (DSGE) models have made significant progress in assessing the underlying forces guiding macro-level behaviour~\citep{Smets2003,Sungbae2007BaysianDSGE}. However, DSGE models are somewhat limited, in that they are constructed under the presumption that human behaviour is homogeneous and that economic systems move toward an equilibrium~\citep{Farmer2009NeedABM}. This rests in stark contrast to the heterogeneous, analytically intractable human behaviour which underlies large-scale economic systems.
+In recent history, two main techniques have emerged in attempting to predict economic behaviour:\begin{inparaenum}[a.)]
+\item Dynamic Stochastic General Equilibrium (DSGE) models, and 
+\item Agent-based Models (ABM).
+\end{inparaenum} DSGE models have made significant progress in assessing the microfoundations guiding macro-level behaviour~\citep{Smets2003,Sungbae2007BaysianDSGE}. Such models offer strong, quantitative economic forecasts grounded by calibration and validation against historic data. However, DSGE models have limitations. They are constructed under the presumption that human behaviour is homogeneous and that economic systems move toward an equilibrium~\citep{Farmer2009NeedABM}. This rests in stark contrast to the heterogeneous, analytically intractable human behaviour which underlies large-scale economic systems.
 
-Agent-based models (ABMs) attempt to overcome these obstacles. ABMs allow heterogenous agent behaviour, permitting the researcher to consider the effects of complex micro-level interactions on macro-level behaviour. ABMs have had several successes~\citep{Klimek2015144,Poledna2014199,Deissenberg2008541,Schelling1971}. However, whilst ABMs offer heterogeneous behaviour for free, much of the research currently conducted is of a qualitative nature. Further, progress in the building of large scale models of economic systems has been significantly hindered by the lack of a common modelling platform as well as a common tool stack for data management and analytics. The consequence is that, even when ABM offer quantitative results, it is difficult to replicate or compare competing models.
+ABMs overcome several DSGE obstacles but possess limitations of their own. ABMs allow heterogenous agent behaviour, permitting the researcher to consider the effects of complex micro-level interactions on macro-level behaviour. ABMs have had several successes~\citep{Klimek2015144,Poledna2014199,Deissenberg2008541,Schelling1971}. However, whilst ABMs offer heterogeneous behaviour for free, much of the research currently conducted is of a qualitative nature, lacking the calibration and validation techniques required to ground their results. Further, progress in building large-scale models of economic systems has been significantly hindered by the lack of a common modeling platform as well as a common tool stack for data management and analytics. The consequence is that, even when ABMs offer quantitative results, it is difficult to replicate or compare competing models.
+
+In juxtaposing the two methodologies, we believe it is important to note that large-scale micro panel data-sets are becoming increasingly available. Presuming this trend continues, we believe that heterogeneous agent-based models are better placed to leverage such data. However, to exploit this recent deluge of data, agent-based models need to overcome the aforementioned weaknesses. They much strive to offer the microfounded quantitative insight of DSGE models.
 
 \section{Solution: ScalABM}
 
-ScalABM attempts to solve several of the problems in predicting and analysing the behaviour of economic systems. ScalABM merges the quantitative analysis of DSGE models with the heterogeneity and inherent scalability of ABMs. Further ScalABM offers replicable analysis by presenting a common, modular platform for using ABMs to scrutinizing a variety of economic systems. 
+ScalABM is a tool set for building agent-based economic models, which attempts to solve several of the limitations of current ABM models whilst integrating the benefits of DSGE models. The intention of ScalABM is to provide a collaborative application where users in a variety of economic disciplines can model and analyse agent-based models. ScalABM combines ``Big Data'' techniques, particularly machine learning methods capable of taking advantage of large-scale micro panel data sets, with structural economic modeling. Further, ScalABM offers replicable analysis by presenting a common, modular platform for using ABMs to scrutinize a variety of economic systems.
 
-The intention of ScalABM is to provide a collaborative application where users in a variety of economic disciplines can model and analyse agent-based models. To the user the system will be accessed through a web-application, permitting the user to a.) import data, b.) set up their economic components using ScalABMs plug and play markets and institutions, and c.) analyse the dynamics of their model over time.
+To the user, the system will be accessed through a web-application, permitting the user to a.) import data, b.) set up their economic components using ScalABMs plug and play markets and institutions, c.) use machine learning techniques to calibrate their model to fit historic data, and d.) analyse the dynamics of their model over time.
 \\
 \\
 \textbf{ScalABM is}:
 
 \begin{itemize}
 
-\item \textit{Data Driven:} ScalABM we will manage the flow and storage of both model generated data as well as real-world data. The user's models will be grounded by their empirical data. Calibration and validation techniques will permit the user to adjust their model to fall in line with historical data whilst analytic tools will provide the user data on the state of the model during run-time.
+\item \textit{Data Driven, Calibrated and Validated:} ScalABM manages the flow and storage of both model generated data as well as real-world data. The user's models will be grounded by their empirical data. Calibration and validation techniques will permit the user to adjust their model to fall in line with historical data whilst analytic tools will provide the user data on the state of the model during run-time.
 
-\item\textit{Versatile:} With multiple entry points, ScalABM offers users their choice in the granularity of control required for their research. At the simplistic end, a user may instantiate plug-and-play markets, banks, and individuals via a web interface. Analysis of agent interactions can be conducted without any programming on the end-user side. If the user requires more granular control of their system, they may implement their own types of markets, banks, etc. By developing classes which meet the ScalABM's specifications, a user can develop the system to their own specification.
+\item\textit{Versatile:} With multiple entry points, ScalABM offers users their choice in the granularity of control required for their research. Non-programmers may instantiate plug-and-play markets, banks, and individuals via a web interface. Analysis of agent interactions can be conducted without any programming on the end-user side. If the user requires more granular control of their system, they may implement their own types of markets, banks, etc. By developing classes which meet the ScalABM's specifications, a user can develop the system to their own specification.
 
 \item \textit{Open-Source:} The development of all ScalABM libraries will be driven by the needs of the economics ABM community. All software development will take place in public: from the start of the project all source code for the ScalABM project will be hosted on GitHub under a permissive Apache 2.0 license that allows for free use of the software libraries (even in commercial applications).
 
@@ -49,7 +55,7 @@ The intention of ScalABM is to provide a collaborative application where users i
 
 \item \textit{Scalable:} System size is a key parameter for modeling economic systems and in order to accurately model the dynamics of some systems, users may need to build and simulate models that are as close to observed scale as possible. ScalABM outsources cluster management to third party providers. ABMs built using our framework can be ``containerized'' using technologies such as \href{https://www.docker.com/}{Docker} or \href{https://www.vagrantup.com/}{Vagrant} and then deployed on a third-party cloud computing service provider such as \href{http://aws.amazon.com/}{AWS}, \href{https://cloud.google.com/compute/}{Google Compute Engine}, \href{https://www.heroku.com/}{Heroku}, \href{https://mesosphere.com/}{Mesosphere}, etc. This third party provider then handles all of the intricacies involved with scaling up the model on the cluster to meet our needs.
     
-\item \textit{Reproducible:} No longer dependent on access to university or national supercomputers enhances the reproducibility or our research.  The ability to ``containerize'' an ABM built using ScalABM's framework means that researchers not directly involved in developing a model can still access everything (even down to the operating system) necessary to completely reproduce that model's output. The container can be used to run the model locally on a laptop or sent to a third party provider to scale up via the cloud.
+\item \textit{Reproducible:} ScalABM is not dependent on access to university or national supercomputers. This enhances the reproducibility research.  The ability to ``containerize'' an ABM built using ScalABM's framework means that researchers not directly involved in developing a model can still access everything (even down to the operating system) necessary to completely reproduce that model's output. The container can be used to run the model locally on a laptop or sent to a third party provider to scale up via the cloud.
 
 \end{itemize}
 
@@ -124,7 +130,7 @@ Several key features distinguish \textit{economic} agents from more generic type
     \item \textit{Expectations formation rules}: A large number of various expectation formation rules have been proposed in the literature. Useful references for expectation formation rules are \href{http://feb.kuleuven.be/fac/Slides_Degrauwe/HomHBchapter23.pdf}{Hommes (2006)}, \href{http://econ.columbia.edu/files/econ/content/hommes_background_material_2.pdf}{Anufriev and Hommes (2012)}, \href{http://www.columbia.edu/~mw2230/AREcon.pdf}{Woodford (2013)}, \href{http://www.emeraldinsight.com/doi/pdfplus/10.1108/S0193-230620140000017002}{Assenza et al (2014)}.
 \end{itemize}
 
-Figure~\ref{fig:BehaviorImage} depicts a high-level description of an agent as a layered collection of behaviors and decision rules.
+Figure~\ref{fig:BehaviorImage} depicts a high-level description of an agent as a layered collection of behavior modules and decision rules. An example of this layered collection would be an agent who has a utility maximization behavior module and, consequently, several decision-rules comprising how to act in order to maximize its utility. 
 
 \begin{figure*}
 \centering
@@ -166,7 +172,7 @@ Finally, the process of wiring model components together (which includes the spe
 \subsection{Calibration}
 \label{Calibration}
 
-If a user is attempting to understand an existing economic system, they will need to calibrate the interaction of their economic components such that the entire system mimics historical data. Example calibration questions include:
+If a user is attempting to understand an existing economic system, they will need to calibrate the interaction of their economic components such that the entire system fits data as well as possible and generalizes out of sample. Example calibration questions include:
 
 \begin{itemize}
     \item Historically, how do individuals process information to make decisions?
@@ -248,7 +254,7 @@ Our strategy for running ABMs at scale will instead leverage massively multi-cor
 
 \begin{itemize}
     \item Outsourcing of cluster management to third party providers. ABMs built using ScalABM can be ``containerized'' and sent off to a third-party cloud computing service provider such as \href{http://aws.amazon.com/}{AWS}, \href{https://cloud.google.com/compute/}{Google Compute Engine}, \href{https://www.heroku.com/}{Heroku}, \href{https://mesosphere.com/}{Mesosphere}, etc. This third party provider can then handle all of the intricacies involved with scaling up the model on the cluster to meet the users needs.
-    \item No longer dependent on access to university/national super-computers enhances the reproducibility or our research.  The ability to ``containerize'' an ABM built using out framework means that researchers not directly involved in developing a model can still access all material necessary to completely reproduce that model's output. The container can be used to run the model locally on a laptop or sent to a third party provider to scale up via the cloud. 
+    \item Not being dependent on access to university/national super-computers. This enhances the reproducibility or our research.  The ability to ``containerize'' an ABM built using the ScalABM framework means that researchers not directly involved in developing a model can still access all material necessary to completely reproduce that model's output. The container can be used to run the model locally on a laptop or sent to a third party provider to scale up via the cloud. 
 \end{itemize}
 
 \subsubsection{Modeling environment}
@@ -259,11 +265,13 @@ The modeling environment consists of user interfaces and the modeling layer. The
     \item Model configuration, including specification of all model parameters as well as the ``wiring'' of model components, should be specified in configuration files that are separate from the actual source code.
 \end{itemize}
 
-The modeling layer itself is organized into a number of sub-layers: a behavioral layer, an information layer, and a data analytics layer. See figure \ref{img-figure-2}.
-\begin{figure}[H]\label{img-figure-2}
+The modeling layer itself is organized into a number of sub-layers: a Behavioral layer, an Information layer, and a Data Analytics layer (see Figure~\ref{img-figure-2}). The Data Analytics layer represents the methods for storing and processing data, whether imported into the system or created by the system (see Section~\ref{refDataAnalytics}). The information layer acts as the middle-man between the Data Analytics layer and the Behavioral layer. Data which has been processed in the Data Analytics layer can be passed down as observables to the agents. On the other hand, agent and system behavior is passed through the Information layer to be stored and processed in the Data Analytics layer. The Behavior layer represents agent and system behavior. As agents in the system are fed observables by the Information layer, their behaviors are fed back to the Information layer, which can act as observables for future behaviors.
+
+\begin{figure}
 \centering
 \includegraphics[width=10cm]{img/coarse-grain-model-layer.pdf}
 \caption{High-level organization of the modeling layer.}
+\label{img-figure-2}
 \end{figure}
 
 \subsection{User Interface}
@@ -285,6 +293,7 @@ The designs of both UIs require extensive discussion. Even before design discuss
   
   
 \subsection{Data Processing}
+\label{refDataAnalytics}
 
 In order for our ABMs to be data-driven, we need to think carefully about how our framework will manage the flow and storage of data (both model generated data as well as real-world data). There are (at least) three components to data management: access, analytics, and storage.
 \begin{itemize}
